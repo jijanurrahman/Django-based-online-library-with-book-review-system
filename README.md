@@ -12,7 +12,6 @@ A comprehensive Django-based web application for managing an online library with
 - [Models](#models)
 - [API Endpoints](#api-endpoints)
 - [Admin Panel](#admin-panel)
-- [Contributing](#contributing)
 - [License](#license)
 
 ## ✨ Features
