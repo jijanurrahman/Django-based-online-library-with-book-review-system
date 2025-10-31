@@ -246,7 +246,8 @@ The admin panel provides comprehensive management features:
 
 ## 📝 License
 
-This project is developed by **Jijanur Rahman** as part of the Ostad course projects.
+This project is developed by **Jijanur Rahman** as part of personal practice for a Django full-stack development journey.
+
 
 ## 📧 Contact
 
