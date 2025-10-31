@@ -1,0 +1,91 @@
+{% extends 'books/base.html' %}
+
+{% block title %}Books - Online Library{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h1 class="mb-4">
+            <i class="fas fa-books"></i> Browse Books
+        </h1>
+        
+        <!-- Search and Filter Form -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form method="get" action="{% url 'book_list' %}">
+                    <div class="row">
+                        <div class="col-md-8">
+                            {{ form.query }}
+                        </div>
+                        <div class="col-md-3">
+                            {{ form.category }}
+                        </div>
+                        <div class="col-md-1">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {% if query %}
+        <div class="alert alert-info">
+            Showing results for: <strong>{{ query }}</strong>
+            <a href="{% url 'book_list' %}" class="btn btn-sm btn-outline-info ms-2">Clear Search</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row">
+    {% if books %}
+        {% for book in books %}
+        <div class="col-md-4 col-lg-3 mb-4">
+            <div class="card book-card">
+                {% if book.cover_image %}
+                    <img src="{{ book.cover_image.url }}" class="card-img-top book-cover" alt="{{ book.title }}">
+                {% else %}
+                    <div class="card-img-top book-cover bg-secondary d-flex align-items-center justify-content-center">
+                        <i class="fas fa-book fa-5x text-white"></i>
+                    </div>
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ book.title }}</h5>
+                    <p class="card-text text-muted mb-2">
+                        <small><i class="fas fa-user"></i> {{ book.author }}</small>
+                    </p>
+                    <p class="card-text">
+                        <span class="badge bg-info">{{ book.category }}</span>
+                    </p>
+                    <div class="mb-2">
+                        <span class="star-rating">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= book.average_rating %}
+                                    <i class="fas fa-star"></i>
+                                {% else %}
+                                    <i class="far fa-star"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </span>
+                        <small class="text-muted">({{ book.total_reviews }} review{{ book.total_reviews|pluralize }})</small>
+                    </div>
+                    <a href="{% url 'book_detail' book.pk %}" class="btn btn-primary btn-sm w-100">
+                        View Details <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-12">
+            <div class="alert alert-warning text-center">
+                <i class="fas fa-exclamation-triangle fa-3x mb-3"></i>
+                <h4>No books found</h4>
+                <p>Try adjusting your search criteria or check back later for new books.</p>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

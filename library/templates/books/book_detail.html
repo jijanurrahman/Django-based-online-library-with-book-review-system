@@ -1,0 +1,122 @@
+{% extends 'books/base.html' %}
+
+{% block title %}{{ book.title }} - Online Library{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        {% if book.cover_image %}
+            <img src="{{ book.cover_image.url }}" class="img-fluid rounded shadow" alt="{{ book.title }}">
+        {% else %}
+            <div class="bg-secondary text-white d-flex align-items-center justify-content-center rounded shadow" style="height: 400px;">
+                <i class="fas fa-book fa-10x"></i>
+            </div>
+        {% endif %}
+    </div>
+    
+    <div class="col-md-8">
+        <h1>{{ book.title }}</h1>
+        <h4 class="text-muted mb-3">
+            <i class="fas fa-user"></i> by {{ book.author }}
+        </h4>
+        
+        <p>
+            <span class="badge bg-info fs-6">{{ book.category }}</span>
+        </p>
+        
+        <div class="mb-3">
+            <span class="star-rating fs-5">
+                {% for i in "12345" %}
+                    {% if forloop.counter <= book.average_rating %}
+                        <i class="fas fa-star"></i>
+                    {% else %}
+                        <i class="far fa-star"></i>
+                    {% endif %}
+                {% endfor %}
+            </span>
+            <span class="fs-5 ms-2">{{ book.average_rating }}/5</span>
+            <small class="text-muted">({{ book.total_reviews }} review{{ book.total_reviews|pluralize }})</small>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-info-circle"></i> Description</h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text">{{ book.description }}</p>
+            </div>
+        </div>
+        
+        {% if user.is_authenticated %}
+            {% if not user_review %}
+                <a href="{% url 'add_review' book.pk %}" class="btn btn-success btn-lg">
+                    <i class="fas fa-plus"></i> Write a Review
+                </a>
+            {% else %}
+                <div class="alert alert-info">
+                    <i class="fas fa-check-circle"></i> You have already reviewed this book.
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="alert alert-warning">
+                <i class="fas fa-sign-in-alt"></i> Please <a href="{% url 'login' %}">login</a> to write a review.
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<hr class="my-5">
+
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4">
+            <i class="fas fa-comments"></i> Reviews ({{ reviews.count }})
+        </h2>
+        
+        {% if reviews %}
+            {% for review in reviews %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h5 class="card-title">
+                                <i class="fas fa-user-circle"></i> {{ review.user.username }}
+                                {% if review.user == user %}
+                                    <span class="badge bg-secondary">You</span>
+                                {% endif %}
+                            </h5>
+                            <div class="star-rating">
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= review.rating %}
+                                        <i class="fas fa-star"></i>
+                                    {% else %}
+                                        <i class="far fa-star"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
+                    </div>
+                    <p class="card-text mt-3">{{ review.comment }}</p>
+                    
+                    {% if review.user == user %}
+                    <div class="btn-group" role="group">
+                        <a href="{% url 'edit_review' review.pk %}" class="btn btn-sm btn-warning">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <a href="{% url 'delete_review' review.pk %}" class="btn btn-sm btn-danger">
+                            <i class="fas fa-trash"></i> Delete
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> No reviews yet. Be the first to review this book!
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
